@@ -54,7 +54,7 @@ class AiSolveHandler extends Handler {
         // 获取题目信息
         const pdoc = await global.Hydro.model.document.get('problem', domainId, pid);
         if (!pdoc) {
-            this.response.body = { success: false, error: '题目不存在' };
+            this.response.body = { success: false, error: `题目不存在(domainId=${domainId}, pid=${pid}, bodyKeys=${Object.keys(body).join(',')})` };
             return;
         }
 
