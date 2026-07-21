@@ -134,7 +134,7 @@ function install(uiDefaultPath) {
     </div>
     {% endif %}`;
 
-        injectToTemplate(problemDetailHtml, '<div class="section__body', bannerInjection);
+        injectToTemplate(problemDetailHtml, '<div class="section__body">', bannerInjection);
     }
 
     // 4. 注入评测记录页 AI 查错按钮
@@ -176,7 +176,7 @@ function install(uiDefaultPath) {
     {% endif %}`;
 
         // 在 section__body 内容之前插入
-        injectToTemplate(recordDetailHtml, '<div class="section__body', debugInjection);
+        injectToTemplate(recordDetailHtml, '<div class="section__body">', debugInjection);
     }
 
     console.log('[ai-assistant] ✅ 模板注入完成！');
