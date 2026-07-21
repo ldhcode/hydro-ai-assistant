@@ -91,7 +91,7 @@ function install(uiDefaultPath) {
     console.log(`[ai-assistant] ui-default 路径: ${uiDefaultPath}`);
 
     // 1. 注入页面头部（CSS/JS 引入）
-    const layoutHtml = path.join(uiDefaultPath, 'templates', 'layout', 'layout.html');
+    const layoutHtml = path.join(uiDefaultPath, 'templates', 'layout', 'html5.html');
     const headInjection = `
     {% if AiAssistantEnabled %}
     <link rel="stylesheet" href="/ai-assistant/static/ai-assistant.css">
@@ -197,7 +197,7 @@ function uninstall(uiDefaultPath) {
     }
 
     const templates = [
-        path.join(uiDefaultPath, 'templates', 'layout', 'layout.html'),
+        path.join(uiDefaultPath, 'templates', 'layout', 'html5.html'),
         path.join(uiDefaultPath, 'templates', 'partials', 'problem_sidebar_normal.html'),
         path.join(uiDefaultPath, 'templates', 'problem_detail.html'),
         path.join(uiDefaultPath, 'templates', 'record_detail.html'),
