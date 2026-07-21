@@ -23,13 +23,11 @@ import {
     AiSolveHandler, AiDebugHandler, AiQaHandler, AiStaticHandler,
 } from './handler';
 
-export const inject = ['model'];
-
 export async function apply(ctx: Context) {
     const pluginName = 'ai-assistant';
 
-    // 获取 Setting 和 SystemSetting API
-    const { Setting, SystemSetting } = ctx.model.setting;
+    // 通过全局对象获取 Setting 和 SystemSetting API（与 setting.ts 内部一致）
+    const { Setting, SystemSetting } = global.Hydro.model.setting;
 
     // ==========================
     // 1. 注册系统设置项
@@ -50,7 +48,7 @@ export async function apply(ctx: Context) {
     );
 
     // 辅助函数：读取系统设置
-    const getSetting = (key: string) => ctx.model.system.get(key);
+    const getSetting = (key: string) => global.Hydro.model.system.get(key);
 
     // ==========================
     // 2. 注册路由
