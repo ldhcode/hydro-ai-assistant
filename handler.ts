@@ -31,7 +31,7 @@ class AiSolveHandler extends Handler {
         }
 
         // 获取系统设置
-        const system = (this.ctx as any).model.system;
+        const system = global.Hydro.model.system;
         const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
         const apiKey = system.get('ai-assistant.apiKey') ||
@@ -92,7 +92,7 @@ class AiDebugHandler extends Handler {
             return;
         }
 
-        const system = (this.ctx as any).model.system;
+        const system = global.Hydro.model.system;
         const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
         const apiKey = system.get('ai-assistant.apiKey') ||
@@ -164,7 +164,7 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const system = (this.ctx as any).model.system;
+        const system = global.Hydro.model.system;
         const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
         const apiKey = system.get('ai-assistant.apiKey') ||

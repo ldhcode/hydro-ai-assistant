@@ -23,6 +23,8 @@ import {
     AiSolveHandler, AiDebugHandler, AiQaHandler, AiStaticHandler,
 } from './handler';
 
+export const inject = ['model'];
+
 export async function apply(ctx: Context) {
     const pluginName = 'ai-assistant';
 
