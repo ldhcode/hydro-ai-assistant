@@ -208,13 +208,14 @@ class AiQaHandler extends Handler {
 // 匹配 /ai-assistant/static/:file
 // ============================
 class AiStaticHandler extends Handler {
-    async get(file: string) {
-        const fs = await import('fs');
-        const path = await import('path');
+    @param('file', Types.String)
+    async get(_domainId: string, file: string) {
+        const fs = require('fs');
+        const path = require('path');
 
         // 安全检查：防止路径穿越
         const safeFile = path.basename(file || 'ai-assistant.js');
-        const filePath = path.join(__dirname, 'static', safeFile);
+        const filePath = path.resolve(__dirname, 'static', safeFile);
 
         if (!fs.existsSync(filePath)) {
             this.response.status = 404;
