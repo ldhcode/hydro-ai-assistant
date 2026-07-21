@@ -32,15 +32,20 @@ class AiSolveHandler extends Handler {
 
         // 获取系统设置
         const system = global.Hydro.model.system;
-        const endpoint = system.get('ai-assistant.endpoint') ||
+        const dbApiKey = system.get('ai-assistant.apiKey');
+        const dbEndpoint = system.get('ai-assistant.endpoint');
+        const dbModel = system.get('ai-assistant.model');
+        console.log('[ai-assistant] DEBUG settings:', { dbApiKey: dbApiKey ? '***' : '(empty)', dbEndpoint, dbModel, envKey: process.env.AI_API_KEY ? 'SET' : '(empty)' });
+
+        const endpoint = dbEndpoint ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
-        const apiKey = system.get('ai-assistant.apiKey') ||
+        const apiKey = dbApiKey ||
             process.env.AI_API_KEY || '';
-        const model = system.get('ai-assistant.model') ||
+        const model = dbModel ||
             process.env.AI_MODEL || 'gpt-4o-mini';
 
         if (!apiKey) {
-            this.response.body = { success: false, error: 'AI 服务未配置，请联系管理员' };
+            this.response.body = { success: false, error: `AI 服务未配置(dbKey=${!!dbApiKey},envKey=${!!process.env.AI_API_KEY})` };
             return;
         }
 
