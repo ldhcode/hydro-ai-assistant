@@ -26,21 +26,29 @@ import {
 export async function apply(ctx: Context) {
     const pluginName = 'ai-assistant';
 
+    // 获取 Setting 和 SystemSetting API
+    const { Setting, SystemSetting } = ctx.model.setting;
+
     // ==========================
     // 1. 注册系统设置项
     // ==========================
-    ctx.setting.register(`${pluginName}.endpoint`, '', 'text', 'AI API 端点',
-        'OpenAI 兼容的 API 端点地址，用于调用大模型');
-    ctx.setting.register(`${pluginName}.apiKey`, '', 'password', 'AI API 密钥',
-        '调用大模型服务的 API Key');
-    ctx.setting.register(`${pluginName}.model`, 'gpt-4o-mini', 'text', 'AI 模型名称',
-        '使用的模型名称，如 gpt-4o-mini, deepseek-chat, qwen-plus');
-    ctx.setting.register(`${pluginName}.enabled`, true, 'boolean', '启用 AI 助手',
-        '在题目页面和评测记录页启用 AI 助手功能');
-    ctx.setting.register(`${pluginName}.rateLimit`, 10, 'number', '速率限制(次/分钟)',
-        '每个 IP 每分钟最多可调用次数');
-    ctx.setting.register(`${pluginName}.dailyLimit`, 50, 'number', '每日限制(次)',
-        '每个用户每天最多可调用次数');
+    SystemSetting(
+        Setting(pluginName, `${pluginName}.endpoint`, '', 'text', 'AI API 端点',
+            'OpenAI 兼容的 API 端点地址，用于调用大模型'),
+        Setting(pluginName, `${pluginName}.apiKey`, '', 'password', 'AI API 密钥',
+            '调用大模型服务的 API Key'),
+        Setting(pluginName, `${pluginName}.model`, 'gpt-4o-mini', 'text', 'AI 模型名称',
+            '使用的模型名称，如 gpt-4o-mini, deepseek-chat, qwen-plus'),
+        Setting(pluginName, `${pluginName}.enabled`, true, 'boolean', '启用 AI 助手',
+            '在题目页面和评测记录页启用 AI 助手功能'),
+        Setting(pluginName, `${pluginName}.rateLimit`, 10, 'number', '速率限制(次/分钟)',
+            '每个 IP 每分钟最多可调用次数'),
+        Setting(pluginName, `${pluginName}.dailyLimit`, 50, 'number', '每日限制(次)',
+            '每个用户每天最多可调用次数'),
+    );
+
+    // 辅助函数：读取系统设置
+    const getSetting = (key: string) => ctx.model.system.get(key);
 
     // ==========================
     // 2. 注册路由
@@ -63,7 +71,7 @@ export async function apply(ctx: Context) {
     // ==========================
 
     ctx.on('handler/after/ProblemDetail#get', (h: any) => {
-        const enabled = ctx.setting?.('ai-assistant.enabled');
+        const enabled = getSetting('ai-assistant.enabled');
         if (!enabled || !h.response.body) return;
 
         if (typeof h.response.body === 'object') {
@@ -72,7 +80,7 @@ export async function apply(ctx: Context) {
     });
 
     ctx.on('handler/after/RecordDetail#get', (h: any) => {
-        const enabled = ctx.setting?.('ai-assistant.enabled');
+        const enabled = getSetting('ai-assistant.enabled');
         if (!enabled || !h.response.body) return;
 
         if (typeof h.response.body === 'object') {
@@ -86,9 +94,9 @@ export async function apply(ctx: Context) {
     const injectAiAssets = (h: any) => {
         if (h.response.body && typeof h.response.body === 'object' && h.response.body.AiAssistantEnabled) {
             if (!h.response.body.UiContext) h.response.body.UiContext = {};
-            const ctx2 = h.response.body.UiContext;
-            if (!ctx2.extraHead) ctx2.extraHead = [];
-            ctx2.extraHead.push(
+            const uiCtx = h.response.body.UiContext;
+            if (!uiCtx.extraHead) uiCtx.extraHead = [];
+            uiCtx.extraHead.push(
                 '<link rel="stylesheet" href="/ai-assistant/static/ai-assistant.css">',
             );
             // JS 通过模板注入（在页面底部加载）

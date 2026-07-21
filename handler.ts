@@ -31,11 +31,12 @@ class AiSolveHandler extends Handler {
         }
 
         // 获取系统设置
-        const endpoint = (this.ctx as any).setting?.('ai-assistant.endpoint') ||
+        const system = (this.ctx as any).model.system;
+        const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
-        const apiKey = (this.ctx as any).setting?.('ai-assistant.apiKey') ||
+        const apiKey = system.get('ai-assistant.apiKey') ||
             process.env.AI_API_KEY || '';
-        const model = (this.ctx as any).setting?.('ai-assistant.model') ||
+        const model = system.get('ai-assistant.model') ||
             process.env.AI_MODEL || 'gpt-4o-mini';
 
         if (!apiKey) {
@@ -91,11 +92,12 @@ class AiDebugHandler extends Handler {
             return;
         }
 
-        const endpoint = (this.ctx as any).setting?.('ai-assistant.endpoint') ||
+        const system = (this.ctx as any).model.system;
+        const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
-        const apiKey = (this.ctx as any).setting?.('ai-assistant.apiKey') ||
+        const apiKey = system.get('ai-assistant.apiKey') ||
             process.env.AI_API_KEY || '';
-        const model = (this.ctx as any).setting?.('ai-assistant.model') ||
+        const model = system.get('ai-assistant.model') ||
             process.env.AI_MODEL || 'gpt-4o-mini';
 
         if (!apiKey) {
@@ -162,11 +164,12 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const endpoint = (this.ctx as any).setting?.('ai-assistant.endpoint') ||
+        const system = (this.ctx as any).model.system;
+        const endpoint = system.get('ai-assistant.endpoint') ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
-        const apiKey = (this.ctx as any).setting?.('ai-assistant.apiKey') ||
+        const apiKey = system.get('ai-assistant.apiKey') ||
             process.env.AI_API_KEY || '';
-        const model = (this.ctx as any).setting?.('ai-assistant.model') ||
+        const model = system.get('ai-assistant.model') ||
             process.env.AI_MODEL || 'gpt-4o-mini';
 
         if (!apiKey) {
