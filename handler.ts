@@ -13,9 +13,11 @@ import {
 // AI 解题助手处理器
 // ============================
 class AiSolveHandler extends Handler {
-    @param('pid', Types.String, true)
-    @param('mode', Types.String, true)  // 'idea' | 'detailed'
-    async post(domainId: string, pid: string, mode: string) {
+    async post(domainId: string) {
+        const body = this.request.body || {};
+        const pid = body.pid || '';
+        const mode = body.mode || 'idea';
+
         // 速率限制检查
         const ip = this.request.ip || '0.0.0.0';
         if (!checkRateLimit(ip)) {
@@ -83,8 +85,10 @@ class AiSolveHandler extends Handler {
 // AI 代码查错处理器
 // ============================
 class AiDebugHandler extends Handler {
-    @param('rid', Types.String, true)
-    async post(domainId: string, rid: string) {
+    async post(domainId: string) {
+        const body = this.request.body || {};
+        const rid = body.rid || '';
+
         const ip = this.request.ip || '0.0.0.0';
         if (!checkRateLimit(ip)) {
             this.response.body = { success: false, error: '请求过于频繁，请稍后再试' };
@@ -154,9 +158,11 @@ class AiDebugHandler extends Handler {
 // AI 智能答疑处理器
 // ============================
 class AiQaHandler extends Handler {
-    @param('pid', Types.String, true)
-    @param('question', Types.String, true)
-    async post(domainId: string, pid: string, question: string) {
+    async post(domainId: string) {
+        const body = this.request.body || {};
+        const pid = body.pid || '';
+        const question = body.question || '';
+
         const ip = this.request.ip || '0.0.0.0';
         if (!checkRateLimit(ip)) {
             this.response.body = { success: false, error: '请求过于频繁，请稍后再试' };
