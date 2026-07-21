@@ -50,7 +50,7 @@ class AiSolveHandler extends Handler {
         }
 
         // 获取题目信息
-        const pdoc = await (this.ctx as any).model.document.get('problem', domainId, pid);
+        const pdoc = await global.Hydro.model.document.get('problem', domainId, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
@@ -111,7 +111,7 @@ class AiDebugHandler extends Handler {
         }
 
         // 获取评测记录
-        const rdoc = await (this.ctx as any).model.document.get('record', domainId, rid);
+        const rdoc = await global.Hydro.model.document.get('record', domainId, rid);
         if (!rdoc) {
             this.response.body = { success: false, error: '评测记录不存在' };
             return;
@@ -124,7 +124,7 @@ class AiDebugHandler extends Handler {
         }
 
         // 获取题目信息
-        const pdoc = await (this.ctx as any).model.document.get('problem', domainId, String(rdoc.pid));
+        const pdoc = await global.Hydro.model.document.get('problem', domainId, String(rdoc.pid));
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
@@ -182,7 +182,7 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const pdoc = await (this.ctx as any).model.document.get('problem', domainId, pid);
+        const pdoc = await global.Hydro.model.document.get('problem', domainId, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
