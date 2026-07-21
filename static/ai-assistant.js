@@ -33,16 +33,15 @@
     // ===================== 通用 AI 面板 =====================
 
     function createAiPanel() {
-        if (document.getElementById('ai-assistant-panel')) {
-            return document.getElementById('ai-assistant-panel');
-        }
+        const existing = document.getElementById('ai-assistant-panel');
+        if (existing) return existing;
 
         const panel = document.createElement('div');
         panel.id = 'ai-assistant-panel';
         panel.className = 'ai-assistant-panel';
         panel.innerHTML = `
             <div class="ai-panel-header">
-                <span class="ai-panel-title">🤖 AI 助手</span>
+                <span class="ai-panel-title">AI 助手</span>
                 <div class="ai-panel-actions">
                     <button class="ai-btn ai-btn-sm ai-btn-clear" title="清空对话">清空</button>
                     <button class="ai-btn ai-btn-sm ai-btn-close" title="关闭">✕</button>
@@ -64,39 +63,51 @@
         document.body.appendChild(panel);
 
         // 事件绑定
-        panel.querySelector('.ai-btn-close')!.addEventListener('click', () => {
-            panel.classList.remove('ai-panel-open');
-        });
+        const closeBtn = panel.querySelector('.ai-btn-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                panel.classList.remove('ai-panel-open');
+            });
+        }
 
-        panel.querySelector('.ai-btn-clear')!.addEventListener('click', () => {
-            const msgContainer = panel.querySelector('#ai-messages')!;
-            msgContainer.innerHTML = '';
-        });
+        const clearBtn = panel.querySelector('.ai-btn-clear');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                const msgContainer = panel.querySelector('#ai-messages');
+                if (msgContainer) msgContainer.innerHTML = '';
+            });
+        }
 
-        panel.querySelector('#ai-send-btn')!.addEventListener('click', () => sendQaMessage(panel));
-        panel.querySelector('#ai-input')!.addEventListener('keydown', (e) => {
-            if ((e as KeyboardEvent).key === 'Enter' && !(e as KeyboardEvent).shiftKey) {
-                e.preventDefault();
-                sendQaMessage(panel);
-            }
-        });
+        const sendBtn = panel.querySelector('#ai-send-btn');
+        if (sendBtn) sendBtn.addEventListener('click', () => sendQaMessage(panel));
+
+        const inputEl = panel.querySelector('#ai-input');
+        if (inputEl) {
+            inputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendQaMessage(panel);
+                }
+            });
+        }
 
         return panel;
     }
 
-    function showAiPanel(panel: HTMLElement) {
+    function showAiPanel(panel) {
         panel.classList.add('ai-panel-open');
-        const input = panel.querySelector('#ai-input') as HTMLTextAreaElement;
+        const input = panel.querySelector('#ai-input');
         if (input) setTimeout(() => input.focus(), 300);
     }
 
-    function addMessage(panel: HTMLElement, role: 'user' | 'assistant' | 'system', content: string) {
-        const msgContainer = panel.querySelector('#ai-messages')!;
+    function addMessage(panel, role, content) {
+        const msgContainer = panel.querySelector('#ai-messages');
+        if (!msgContainer) return null;
+
         const msg = document.createElement('div');
-        msg.className = `ai-message ai-msg-${role}`;
+        msg.className = 'ai-message ai-msg-' + role;
 
         if (role === 'assistant' || role === 'system') {
-            // 简单 Markdown 渲染
             msg.innerHTML = renderMarkdown(content);
         } else {
             msg.textContent = content;
@@ -106,8 +117,10 @@
         return msg;
     }
 
-    function showLoading(panel: HTMLElement): HTMLElement {
-        const msgContainer = panel.querySelector('#ai-messages')!;
+    function showLoading(panel) {
+        const msgContainer = panel.querySelector('#ai-messages');
+        if (!msgContainer) return null;
+
         const loading = document.createElement('div');
         loading.className = 'ai-message ai-msg-assistant ai-loading';
         loading.innerHTML = '<span class="ai-dot-pulse"></span> AI 思考中...';
@@ -116,14 +129,14 @@
         return loading;
     }
 
-    function removeLoading(panel: HTMLElement, loading: HTMLElement) {
+    function removeLoading(panel, loading) {
         if (loading && loading.parentNode) {
             loading.parentNode.removeChild(loading);
         }
     }
 
     // 简单 Markdown 渲染（支持代码块、加粗、列表）
-    function renderMarkdown(text: string): string {
+    function renderMarkdown(text) {
         // 转义 HTML
         let html = text
             .replace(/&/g, '&amp;')
@@ -160,8 +173,9 @@
     }
 
     // 发送自定义提问
-    async function sendQaMessage(panel: HTMLElement) {
-        const input = panel.querySelector('#ai-input') as HTMLTextAreaElement;
+    async function sendQaMessage(panel) {
+        const input = panel.querySelector('#ai-input');
+        if (!input) return;
         const question = input.value.trim();
         if (!question) return;
 
@@ -196,7 +210,7 @@
     }
 
     // 获取解题思路
-    async function fetchSolveIdea(panel: HTMLElement, mode: 'idea' | 'detailed') {
+    async function fetchSolveIdea(panel, mode) {
         const pid = panel.getAttribute('data-pid');
         if (!pid) {
             addMessage(panel, 'system', '无法获取题目信息。');
@@ -204,7 +218,7 @@
         }
 
         const label = mode === 'idea' ? '解题思路' : '详细题解';
-        addMessage(panel, 'user', `请提供${label}`);
+        addMessage(panel, 'user', '请提供' + label);
         const loading = showLoading(panel);
 
         try {
@@ -250,10 +264,13 @@
             `;
             sidebarInsertPoint.appendChild(aiMenuItem);
 
-            aiMenuItem.querySelector('#ai-assist-btn')!.addEventListener('click', (e) => {
-                e.preventDefault();
-                showAiPanel(panel);
-            });
+            const btn = aiMenuItem.querySelector('#ai-assist-btn');
+            if (btn) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showAiPanel(panel);
+                });
+            }
         }
 
         // 绑定"解题思路"按钮
@@ -281,10 +298,13 @@
             `;
             problemContent.insertBefore(aiBanner, problemContent.firstChild);
 
-            aiBanner.querySelector('#ai-banner-btn')!.addEventListener('click', () => {
-                showAiPanel(panel);
-                fetchSolveIdea(panel, 'idea');
-            });
+            const bannerBtn = aiBanner.querySelector('#ai-banner-btn');
+            if (bannerBtn) {
+                bannerBtn.addEventListener('click', () => {
+                    showAiPanel(panel);
+                    fetchSolveIdea(panel, 'idea');
+                });
+            }
         }
     }
 
@@ -297,7 +317,7 @@
 
         // 只在非 AC 状态时显示 AI 查错按钮
         const statusEl = document.querySelector('.record-status--text, .record-status, [class*="status"]');
-        const statusText = statusEl?.textContent?.trim() || '';
+        const statusText = statusEl && statusEl.textContent ? statusEl.textContent.trim() : '';
         const isAccepted = statusText.includes('Accepted') || statusText.includes('通过');
 
         // 创建 AI 面板
@@ -305,7 +325,7 @@
         panel.setAttribute('data-rid', rid);
 
         // 隐藏聊天输入区域，只保留查错相关功能
-        const inputArea = panel.querySelector('.ai-input-area') as HTMLElement;
+        const inputArea = panel.querySelector('.ai-input-area');
         if (inputArea) {
             inputArea.innerHTML = `
                 <div class="ai-debug-buttons">
@@ -328,10 +348,13 @@
             `;
             detailArea.appendChild(debugBtnContainer);
 
-            debugBtnContainer.querySelector('#ai-debug-inline-btn')!.addEventListener('click', () => {
-                showAiPanel(panel);
-                fetchDebugAnalysis(panel, rid);
-            });
+            const inlineBtn = debugBtnContainer.querySelector('#ai-debug-inline-btn');
+            if (inlineBtn) {
+                inlineBtn.addEventListener('click', () => {
+                    showAiPanel(panel);
+                    fetchDebugAnalysis(panel, rid);
+                });
+            }
         }
 
         // 面板内查错按钮
@@ -341,7 +364,7 @@
         }
     }
 
-    async function fetchDebugAnalysis(panel: HTMLElement, rid: string) {
+    async function fetchDebugAnalysis(panel, rid) {
         if (!rid) {
             addMessage(panel, 'system', '无法获取评测记录信息。');
             return;
