@@ -1,0 +1,16 @@
+<!--
+  Hydro AI 助手 - 评测记录详情页注入
+  将此模板覆盖到 RecordDetail 页面模板中
+-->
+
+{# AI 代码查错按钮和前端脚本注入 #}
+{% if AiAssistantEnabled %}
+<script>
+    // 传递评测上下文到前端
+    window.AI_DEBUG_CONTEXT = {
+        rid: {{ rdoc._id|json if rdoc else '""' }},
+        status: {{ rdoc.status if rdoc else 0 }},
+        lang: {{ rdoc.lang|json if rdoc else '""' }}
+    };
+</script>
+{% endif %}

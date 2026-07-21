@@ -1,0 +1,13 @@
+<!-- 
+  Hydro AI 助手 - 题目详情页侧边栏注入
+  将此模板覆盖到 ui-default 的 problem_sidebar_normal 或通过插件钩子注入
+-->
+
+{# 在题目页侧边栏添加 AI 助手入口 #}
+{% if page_name == 'problem_detail' and AiAssistantEnabled %}
+<li class="menu__item ai-menu-item">
+    <a class="menu__link" href="javascript:;" id="ai-assist-sidebar-btn">
+        <span class="icon icon-help"></span> AI 助手
+    </a>
+</li>
+{% endif %}

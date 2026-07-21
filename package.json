@@ -1,0 +1,23 @@
+{
+  "name": "@hydrooj/ai-assistant",
+  "version": "1.0.0",
+  "description": "Hydro 插件 - AI 题解答疑助手，接入大模型提供解题思路、代码查错和智能答疑",
+  "author": "Hydro AI Assistant Developer",
+  "license": "AGPL-3.0",
+  "keywords": ["hydro", "hydrooj", "plugin", "ai", "llm", "assistant"],
+  "main": "index.ts",
+  "files": [
+    "index.ts",
+    "handler.ts",
+    "llm_client.ts",
+    "static/**",
+    "templates/**",
+    "locale/**"
+  ],
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "peerDependencies": {
+    "hydrooj": "^5.0.0"
+  }
+}
