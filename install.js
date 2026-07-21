@@ -118,26 +118,7 @@ function install(uiDefaultPath) {
         injectToTemplate(sidebarHtml, '</ol>', sidebarInjection);
     }
 
-    // 3. 注入题目页 AI Banner
-    const problemDetailHtml = path.join(
-        uiDefaultPath, 'templates', 'problem_detail.html'
-    );
-
-    if (fs.existsSync(problemDetailHtml)) {
-        const bannerInjection = `
-    {% if AiAssistantEnabled %}
-    <div class="ai-banner" style="margin-bottom: 16px; padding: 12px 16px; background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; border-radius: 10px;">
-      <div class="ai-banner-inner" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13.5px; color: #1e40af;">
-        <span>🤖 不会做这题？让 AI 帮你分析</span>
-        <button class="ai-btn ai-btn-primary" onclick="document.getElementById('ai-assist-sidebar-btn').click()" style="flex-shrink: 0;">AI 解题</button>
-      </div>
-    </div>
-    {% endif %}`;
-
-        injectToTemplate(problemDetailHtml, '<div class="section__body">', bannerInjection);
-    }
-
-    // 4. 注入评测记录页 AI 查错按钮
+    // 3. 注入评测记录页 AI 查错按钮
     const recordDetailHtml = path.join(
         uiDefaultPath, 'templates', 'record_detail.html'
     );
@@ -199,7 +180,6 @@ function uninstall(uiDefaultPath) {
     const templates = [
         path.join(uiDefaultPath, 'templates', 'layout', 'html5.html'),
         path.join(uiDefaultPath, 'templates', 'partials', 'problem_sidebar_normal.html'),
-        path.join(uiDefaultPath, 'templates', 'problem_detail.html'),
         path.join(uiDefaultPath, 'templates', 'record_detail.html'),
     ];
 
