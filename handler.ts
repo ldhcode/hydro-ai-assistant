@@ -55,11 +55,11 @@ class AiSolveHandler extends Handler {
         // 获取题目信息
         const pdoc = await global.Hydro.model.document.get('problem', domain, pid);
         if (!pdoc) {
-            this.response.body = { success: false, error: '题目不存在' };
+            this.response.body = { success: false, error: `题目不存在(domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
         }
 
-        // 构建 LLM 配置
+        // 构建 LLM 配置（AiSolveHandler）
         const llmConfig: LLMConfig = {
             endpoint,
             apiKey,
@@ -132,7 +132,7 @@ class AiDebugHandler extends Handler {
         // 获取题目信息
         const pdoc = await global.Hydro.model.document.get('problem', domain, String(rdoc.pid));
         if (!pdoc) {
-            this.response.body = { success: false, error: '题目不存在' };
+            this.response.body = { success: false, error: `题目不存在(debug: domain=${JSON.stringify(domain)}, pid=${rdoc.pid})` };
             return;
         }
 
@@ -193,7 +193,7 @@ class AiQaHandler extends Handler {
 
         const pdoc = await global.Hydro.model.document.get('problem', domain, pid);
         if (!pdoc) {
-            this.response.body = { success: false, error: '题目不存在' };
+            this.response.body = { success: false, error: `题目不存在(qa: domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
         }
 
