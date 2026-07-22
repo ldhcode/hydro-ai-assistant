@@ -289,7 +289,7 @@ function buildProblemPrompt(pdoc: any, mode: string): string {
     if (mode === 'detailed') {
         parts.push('\n请提供详细的题解，包括完整的解题思路、关键算法讲解和复杂度分析。');
     } else if (mode === 'socratic') {
-        parts.push('\n请用苏格拉底式提问引导我思考这道题，不要直接给答案。先从题目理解开始引导我。');
+        parts.push('\n用苏格拉底追问式探究法引导我，从拆题开始提问。减少叙述，用表格和伪代码，竞赛讲义风格。');
     } else {
         parts.push('\n请简要分析题目并给出核心解题思路，不要直接给出完整代码。');
     }
