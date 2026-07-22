@@ -5,7 +5,7 @@
 import { Handler, param, Types } from 'hydrooj';
 import {
     callLLM, checkRateLimit, checkDailyLimit,
-    SOLVE_SYSTEM_PROMPT, DEBUG_SYSTEM_PROMPT, QA_SYSTEM_PROMPT,
+    SOLVE_SYSTEM_PROMPT, DEBUG_SYSTEM_PROMPT, QA_SYSTEM_PROMPT, SOCRATIC_SYSTEM_PROMPT,
     type LLMConfig,
 } from './llm_client';
 
@@ -64,14 +64,15 @@ class AiSolveHandler extends Handler {
             apiKey,
             model,
             maxTokens: mode === 'detailed' ? 4096 : 2048,
-            temperature: 0.7,
+            temperature: mode === 'socratic' ? 0.9 : 0.7,
             timeout: 120000,
         };
 
         // 构建消息
         const userPrompt = buildProblemPrompt(pdoc, mode);
+        const systemPrompt = mode === 'socratic' ? SOCRATIC_SYSTEM_PROMPT : SOLVE_SYSTEM_PROMPT;
         const messages = [
-            { role: 'system' as const, content: SOLVE_SYSTEM_PROMPT },
+            { role: 'system' as const, content: systemPrompt },
             { role: 'user' as const, content: userPrompt },
         ];
 
@@ -287,6 +288,8 @@ function buildProblemPrompt(pdoc: any, mode: string): string {
     }
     if (mode === 'detailed') {
         parts.push('\n请提供详细的题解，包括完整的解题思路、关键算法讲解和复杂度分析。');
+    } else if (mode === 'socratic') {
+        parts.push('\n请用苏格拉底式提问引导我思考这道题，不要直接给答案。先从题目理解开始引导我。');
     } else {
         parts.push('\n请简要分析题目并给出核心解题思路，不要直接给出完整代码。');
     }

@@ -329,6 +329,16 @@
     background: #d1d5db;
 }
 
+.ai-btn-teal {
+    background: #14b8a6;
+    color: #fff;
+}
+
+.ai-btn-teal:hover {
+    background: #0d9488;
+    transform: translateY(-1px);
+}
+
 @media (prefers-color-scheme: dark) {
     .ai-btn-secondary {
         background: #45475a;

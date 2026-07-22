@@ -55,6 +55,7 @@
                         <button class="ai-btn ai-btn-primary ai-btn-send" id="ai-send-btn">发送</button>
                         <button class="ai-btn ai-btn-secondary ai-btn-idea" id="ai-idea-btn">💡 解题思路</button>
                         <button class="ai-btn ai-btn-secondary ai-btn-detail" id="ai-detail-btn">📝 详细题解</button>
+                        <button class="ai-btn ai-btn-teal ai-btn-socratic" id="ai-socratic-btn">🤔 引导我思考</button>
                     </div>
                 </div>
             </div>
@@ -217,7 +218,7 @@
             return;
         }
 
-        const label = mode === 'idea' ? '解题思路' : '详细题解';
+        const label = mode === 'idea' ? '解题思路' : mode === 'socratic' ? '引导式教学' : '详细题解';
         addMessage(panel, 'user', '请提供' + label);
         const loading = showLoading(panel);
 
@@ -283,6 +284,12 @@
         const detailBtn = panel.querySelector('#ai-detail-btn');
         if (detailBtn) {
             detailBtn.addEventListener('click', () => fetchSolveIdea(panel, 'detailed'));
+        }
+
+        // 绑定"引导式教学"按钮
+        const socraticBtn = panel.querySelector('#ai-socratic-btn');
+        if (socraticBtn) {
+            socraticBtn.addEventListener('click', () => fetchSolveIdea(panel, 'socratic'));
         }
 
         // 同时也在题目内容区域上方添加一个 AI 助手入口
