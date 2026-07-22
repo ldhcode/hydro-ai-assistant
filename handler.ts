@@ -38,7 +38,6 @@ class AiSolveHandler extends Handler {
         const dbApiKey = system.get('ai-assistant.apiKey');
         const dbEndpoint = system.get('ai-assistant.endpoint');
         const dbModel = system.get('ai-assistant.model');
-        console.log('[ai-assistant] DEBUG settings:', { dbApiKey: dbApiKey ? '***' : '(empty)', dbEndpoint, dbModel, envKey: process.env.AI_API_KEY ? 'SET' : '(empty)' });
 
         const endpoint = dbEndpoint ||
             process.env.AI_ENDPOINT || 'https://api.openai.com/v1/chat/completions';
@@ -48,12 +47,12 @@ class AiSolveHandler extends Handler {
             process.env.AI_MODEL || 'gpt-4o-mini';
 
         if (!apiKey) {
-            this.response.body = { success: false, error: `AI 服务未配置(dbKey=${!!dbApiKey},envKey=${!!process.env.AI_API_KEY})` };
+            this.response.body = { success: false, error: 'AI 服务未配置，请联系管理员' };
             return;
         }
 
-        // 获取题目信息
-        const pdoc = await global.Hydro.model.document.get(domain, 'problem', pid);
+        // 获取题目信息（TYPE_PROBLEM = 10）
+        const pdoc = await global.Hydro.model.document.get(domain, 10, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
@@ -116,8 +115,8 @@ class AiDebugHandler extends Handler {
             return;
         }
 
-        // 获取评测记录
-        const rdoc = await global.Hydro.model.document.get(domain, 'record', rid);
+        // 获取评测记录（records 在独立 record 集合中）
+        const rdoc = await global.Hydro.model.record.get(domain, rid);
         if (!rdoc) {
             this.response.body = { success: false, error: '评测记录不存在' };
             return;
@@ -129,8 +128,8 @@ class AiDebugHandler extends Handler {
             return;
         }
 
-        // 获取题目信息
-        const pdoc = await global.Hydro.model.document.get(domain, 'problem', String(rdoc.pid));
+        // 获取题目信息（TYPE_PROBLEM = 10）
+        const pdoc = await global.Hydro.model.document.get(domain, 10, String(rdoc.pid));
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(debug: domain=${JSON.stringify(domain)}, pid=${rdoc.pid})` };
             return;
@@ -191,7 +190,7 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const pdoc = await global.Hydro.model.document.get(domain, 'problem', pid);
+        const pdoc = await global.Hydro.model.document.get(domain, 10, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(qa: domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
