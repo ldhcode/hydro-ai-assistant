@@ -309,7 +309,6 @@
             if (bannerBtn) {
                 bannerBtn.addEventListener('click', () => {
                     showAiPanel(panel);
-                    fetchSolveIdea(panel, 'idea');
                 });
             }
         }

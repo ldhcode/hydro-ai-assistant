@@ -189,8 +189,9 @@
 
 /* ===================== 代码块样式 ===================== */
 .ai-code-block {
-    background: #1f2937;
-    color: #e5e7eb;
+    background: #fff;
+    color: #1a1a2e;
+    border: 1px solid #d1d5db;
     padding: 12px 14px;
     border-radius: 8px;
     overflow-x: auto;
@@ -202,6 +203,7 @@
 
 .ai-code-block code {
     background: none;
+    color: #1a1a2e;
     padding: 0;
 }
 
