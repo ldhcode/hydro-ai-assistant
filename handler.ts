@@ -53,7 +53,7 @@ class AiSolveHandler extends Handler {
         }
 
         // 获取题目信息
-        const pdoc = await global.Hydro.model.document.get('problem', domain, pid);
+        const pdoc = await global.Hydro.model.document.get(domain, 'problem', pid);
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
@@ -117,7 +117,7 @@ class AiDebugHandler extends Handler {
         }
 
         // 获取评测记录
-        const rdoc = await global.Hydro.model.document.get('record', domain, rid);
+        const rdoc = await global.Hydro.model.document.get(domain, 'record', rid);
         if (!rdoc) {
             this.response.body = { success: false, error: '评测记录不存在' };
             return;
@@ -130,7 +130,7 @@ class AiDebugHandler extends Handler {
         }
 
         // 获取题目信息
-        const pdoc = await global.Hydro.model.document.get('problem', domain, String(rdoc.pid));
+        const pdoc = await global.Hydro.model.document.get(domain, 'problem', String(rdoc.pid));
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(debug: domain=${JSON.stringify(domain)}, pid=${rdoc.pid})` };
             return;
@@ -191,7 +191,7 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const pdoc = await global.Hydro.model.document.get('problem', domain, pid);
+        const pdoc = await global.Hydro.model.document.get(domain, 'problem', pid);
         if (!pdoc) {
             this.response.body = { success: false, error: `题目不存在(qa: domain=${JSON.stringify(domain)}, pid=${pid})` };
             return;
