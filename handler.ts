@@ -54,7 +54,13 @@ class AiSolveHandler extends Handler {
         // 获取题目信息（TYPE_PROBLEM = 10）
         const pdoc = await global.Hydro.model.document.get(domain, 10, pid);
         if (!pdoc) {
-            this.response.body = { success: false, error: `题目不存在(domain=${JSON.stringify(domain)}, pid=${pid})` };
+            // 调试：列出所有题目
+            const all = await global.Hydro.model.document.getMulti(domain, 10).toArray();
+            const ids = all.slice(0, 10).map((d: any) => `${d.docId}(_id=${String(d._id)})`).join(', ');
+            this.response.body = {
+                success: false,
+                error: `题目不存在(domain=${JSON.stringify(domain)}, pid=${pid}), DB中题目: [${ids}]`,
+            };
             return;
         }
 
