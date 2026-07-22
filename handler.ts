@@ -51,9 +51,8 @@ class AiSolveHandler extends Handler {
             return;
         }
 
-        // 通过 display pid 查找题目（TYPE_PROBLEM = 10）
-        const pdocs = await global.Hydro.model.document.getMulti(domain, 10, { pid }).toArray();
-        const pdoc = pdocs[0];
+        // 查找题目
+        const pdoc = await findProblem(domain, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
@@ -129,9 +128,8 @@ class AiDebugHandler extends Handler {
             return;
         }
 
-        // 获取题目信息（通过 pid 字段查找，TYPE_PROBLEM = 10）
-        const pdocs = await global.Hydro.model.document.getMulti(domain, 10, { pid: String(rdoc.pid) }).toArray();
-        const pdoc = pdocs[0];
+        // 查找题目
+        const pdoc = await findProblem(domain, String(rdoc.pid));
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
@@ -192,8 +190,7 @@ class AiQaHandler extends Handler {
             return;
         }
 
-        const pdocs = await global.Hydro.model.document.getMulti(domain, 10, { pid }).toArray();
-        const pdoc = pdocs[0];
+        const pdoc = await findProblem(domain, pid);
         if (!pdoc) {
             this.response.body = { success: false, error: '题目不存在' };
             return;
@@ -257,6 +254,23 @@ class AiStaticHandler extends Handler {
 // ============================
 // 辅助函数
 // ============================
+
+/** 通过 PID 查找题目，兼容 pid 字段和 docId 字段两种存储方式 */
+async function findProblem(domain: string, pid: string) {
+    // 方式1：按 pid 字段查（带前缀的 Pid 如 "C002"）
+    let pdocs = await global.Hydro.model.document.getMulti(domain, 10, { pid }).toArray();
+    if (pdocs.length) return pdocs[0];
+    // 方式2：按 docId 查（有些题目 pid 直接存在 docId 里）
+    pdocs = await global.Hydro.model.document.getMulti(domain, 10, { docId: pid }).toArray();
+    if (pdocs.length) return pdocs[0];
+    // 如果 pid 是纯数字格式如 "002"，也尝试
+    const numericPid = parseInt(pid, 10);
+    if (!isNaN(numericPid)) {
+        pdocs = await global.Hydro.model.document.getMulti(domain, 10, { docId: numericPid }).toArray();
+        if (pdocs.length) return pdocs[0];
+    }
+    return null;
+}
 
 function buildProblemPrompt(pdoc: any, mode: string): string {
     const parts: string[] = [];
