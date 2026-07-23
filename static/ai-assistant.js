@@ -136,7 +136,7 @@
         }
     }
 
-    // 简单 Markdown 渲染（支持代码块、加粗、列表）
+    // Markdown 渲染（支持代码块、表格、引用、LaTeX 数学公式、加粗、列表）
     function renderMarkdown(text) {
         // 转义 HTML
         let html = text
@@ -150,6 +150,9 @@
         // 行内代码 (`...`)
         html = html.replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>');
 
+        // 行内 LaTeX 数学公式 ($...$)
+        html = html.replace(/\$(.+?)\$/g, '<span class="ai-math">$1</span>');
+
         // 加粗 (**...**)
         html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
@@ -158,12 +161,49 @@
         html = html.replace(/^## (.+)$/gm, '<h3 class="ai-h3">$1</h3>');
         html = html.replace(/^# (.+)$/gm, '<h2 class="ai-h2">$1</h2>');
 
+        // 引用块 (> ...)，处理连续多行引用
+        html = html.replace(/((?:^&gt; .*\n?)+)/gm, function(match) {
+            var lines = match.split('\n').filter(function(l) { return l.trim(); });
+            var content = lines.map(function(l) {
+                return l.replace(/^&gt; /, '');
+            }).join('<br>');
+            return '<blockquote class="ai-blockquote">' + content + '</blockquote>';
+        });
+
+        // Markdown 表格处理
+        html = html.replace(/((?:^\|.+\|\n?)+)/gm, function(match) {
+            var lines = match.trim().split('\n');
+            // 跳过纯分隔行（如 |---|---|）
+            var realLines = lines.filter(function(l) { return !/^\|[\s\-:|]+\|$/.test(l); });
+            if (realLines.length < 2) return match; // 至少需要表头+数据行
+
+            var tableHtml = '<table class="ai-table"><thead><tr>';
+            var headers = realLines[0].split('|').filter(function(c) { return c.trim(); });
+            headers.forEach(function(h) {
+                tableHtml += '<th>' + h.trim() + '</th>';
+            });
+            tableHtml += '</tr></thead><tbody>';
+            for (var i = 1; i < realLines.length; i++) {
+                var cells = realLines[i].split('|').filter(function(c) { return c.trim(); });
+                tableHtml += '<tr>';
+                cells.forEach(function(c) {
+                    tableHtml += '<td>' + c.trim() + '</td>';
+                });
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</tbody></table>';
+            return tableHtml;
+        });
+
         // 无序列表
         html = html.replace(/^- (.+)$/gm, '<li class="ai-li">$1</li>');
         html = html.replace(/((?:<li[^>]*>.*<\/li>\n?)+)/g, '<ul class="ai-ul">$1</ul>');
 
         // 有序列表
         html = html.replace(/^\d+\.\s(.+)$/gm, '<li class="ai-li">$1</li>');
+
+        // 水平线
+        html = html.replace(/^---$/gm, '<hr class="ai-hr">');
 
         // 换行
         html = html.replace(/\n\n/g, '</p><p>');

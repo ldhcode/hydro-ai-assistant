@@ -216,10 +216,107 @@
     font-family: 'Fira Code', 'Cascadia Code', Consolas, monospace;
 }
 
+/* ===================== 引用块样式 ===================== */
+.ai-blockquote {
+    background: #f0fdf4;
+    border-left: 4px solid #14b8a6;
+    margin: 8px 0;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    color: #065f46;
+    font-style: normal;
+}
+
+/* ===================== 表格样式 ===================== */
+.ai-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 12px;
+    overflow-x: auto;
+    display: block;
+}
+
+.ai-table thead {
+    background: #e0f2fe;
+}
+
+.ai-table th {
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #38bdf8;
+    color: #0c4a6e;
+    white-space: nowrap;
+}
+
+.ai-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+}
+
+.ai-table tbody tr:hover {
+    background: #f0f9ff;
+}
+
+/* ===================== 数学公式样式 ===================== */
+.ai-math {
+    font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', serif;
+    background: #fef3c7;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #92400e;
+}
+
+/* ===================== 水平线样式 ===================== */
+.ai-hr {
+    border: none;
+    border-top: 1px solid #d1d5db;
+    margin: 10px 0;
+}
+}
+
 @media (prefers-color-scheme: dark) {
     .ai-inline-code {
         background: #45475a;
         color: #fab387;
+    }
+
+    /* 暗色：引用块 */
+    .ai-blockquote {
+        background: #1a2e1a;
+        border-left-color: #14b8a6;
+        color: #a7f3d0;
+    }
+
+    /* 暗色：表格 */
+    .ai-table thead {
+        background: #1e293b;
+    }
+    .ai-table th {
+        border-bottom-color: #38bdf8;
+        color: #7dd3fc;
+        background: #1e293b;
+    }
+    .ai-table td {
+        border-bottom-color: #334155;
+        color: #cdd6f4;
+    }
+    .ai-table tbody tr:hover {
+        background: #1e293b;
+    }
+
+    /* 暗色：数学公式 */
+    .ai-math {
+        background: #3b2f1e;
+        color: #fde68a;
+    }
+
+    /* 暗色：水平线 */
+    .ai-hr {
+        border-top-color: #45475a;
     }
 }
 
