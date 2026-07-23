@@ -136,10 +136,7 @@
         }
     }
 
-    // 检查 KaTeX 是否已加载
-    var katexReady = (typeof katex !== 'undefined');
-
-    // Markdown 渲染（支持代码块、表格、引用、LaTeX 数学公式、加粗、列表）
+    // Markdown 渲染（支持代码块、表格、引用、KaTeX 数学公式、加粗、列表）
     function renderMarkdown(text) {
         var mathBlocks = [];
 
@@ -229,9 +226,9 @@
         html = html.replace(/\n/g, '<br>');
         html = '<p>' + html + '</p>';
 
-        // ========== 第4步：用 KaTeX 渲染替换占位符 ==========
+        // ========== 第4步：用 KaTeX 渲染替换占位符（Hydro 内置 katex，异步加载） ==========
         mathBlocks.forEach(function(mb) {
-            if (katexReady) {
+            if (typeof katex !== 'undefined') {
                 try {
                     var rendered = katex.renderToString(mb.formula, {
                         throwOnError: false,
@@ -241,12 +238,10 @@
                     });
                     html = html.replace(mb.id, rendered);
                 } catch (e) {
-                    // KaTeX 渲染失败，显示原始公式（高亮样式）
                     html = html.replace(mb.id,
                         '<span class="ai-math">' + mb.formula + '</span>');
                 }
             } else {
-                // KaTeX 未加载，使用备用样式
                 html = html.replace(mb.id,
                     '<span class="ai-math">' + mb.formula + '</span>');
             }
