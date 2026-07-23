@@ -318,6 +318,13 @@
     .ai-hr {
         border-top-color: #45475a;
     }
+
+    /* 暗色：KaTeX 渲染公式 */
+    .katex { color: #cdd6f4; }
+    .katex .mord { color: #cdd6f4; }
+    .katex .mbin, .katex .mrel { color: #89b4fa; }
+    .katex .mop, .katex .mopen, .katex .mclose { color: #cdd6f4; }
+    .katex .mord.text { color: #a6adc8; }
 }
 
 /* ===================== 标题样式 ===================== */

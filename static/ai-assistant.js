@@ -136,22 +136,41 @@
         }
     }
 
+    // 检查 KaTeX 是否已加载
+    var katexReady = (typeof katex !== 'undefined');
+
     // Markdown 渲染（支持代码块、表格、引用、LaTeX 数学公式、加粗、列表）
     function renderMarkdown(text) {
-        // 转义 HTML
-        let html = text
+        var mathBlocks = [];
+
+        // ========== 第1步：提取数学公式为占位符（在 HTML 转义前） ==========
+        // $$...$$ 块级公式
+        text = text.replace(/\$\$([\s\S]*?)\$\$/g, function(match, formula) {
+            var id = '\u0000MATHBLOCK' + mathBlocks.length + '\u0000';
+            mathBlocks.push({ id: id, formula: formula.trim(), display: true });
+            return id;
+        });
+
+        // $...$ 行内公式（不匹配 $$）
+        text = text.replace(/(?<!\$)\$(?!\$)(.+?)(?<!\$)\$(?!\$)/g, function(match, formula) {
+            var id = '\u0000MATHINLINE' + mathBlocks.length + '\u0000';
+            mathBlocks.push({ id: id, formula: formula.trim(), display: false });
+            return id;
+        });
+
+        // ========== 第2步：HTML 转义 ==========
+        var html = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
+
+        // ========== 第3步：Markdown 语法处理 ==========
 
         // 代码块 (```...```)
         html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre class="ai-code-block"><code class="language-$1">$2</code></pre>');
 
         // 行内代码 (`...`)
         html = html.replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>');
-
-        // 行内 LaTeX 数学公式 ($...$)
-        html = html.replace(/\$(.+?)\$/g, '<span class="ai-math">$1</span>');
 
         // 加粗 (**...**)
         html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
@@ -175,7 +194,7 @@
             var lines = match.trim().split('\n');
             // 跳过纯分隔行（如 |---|---|）
             var realLines = lines.filter(function(l) { return !/^\|[\s\-:|]+\|$/.test(l); });
-            if (realLines.length < 2) return match; // 至少需要表头+数据行
+            if (realLines.length < 2) return match;
 
             var tableHtml = '<table class="ai-table"><thead><tr>';
             var headers = realLines[0].split('|').filter(function(c) { return c.trim(); });
@@ -209,6 +228,29 @@
         html = html.replace(/\n\n/g, '</p><p>');
         html = html.replace(/\n/g, '<br>');
         html = '<p>' + html + '</p>';
+
+        // ========== 第4步：用 KaTeX 渲染替换占位符 ==========
+        mathBlocks.forEach(function(mb) {
+            if (katexReady) {
+                try {
+                    var rendered = katex.renderToString(mb.formula, {
+                        throwOnError: false,
+                        displayMode: mb.display,
+                        trust: false,
+                        strict: false
+                    });
+                    html = html.replace(mb.id, rendered);
+                } catch (e) {
+                    // KaTeX 渲染失败，显示原始公式（高亮样式）
+                    html = html.replace(mb.id,
+                        '<span class="ai-math">' + mb.formula + '</span>');
+                }
+            } else {
+                // KaTeX 未加载，使用备用样式
+                html = html.replace(mb.id,
+                    '<span class="ai-math">' + mb.formula + '</span>');
+            }
+        });
 
         return html;
     }
